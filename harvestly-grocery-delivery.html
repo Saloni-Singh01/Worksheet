@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Harvestly — Grocery, delivered before the kettle boils</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --forest:#1B4332;
+    --forest-dark:#0F2A1C;
+    --cream:#FBF6EC;
+    --paper:#FFFDF9;
+    --tomato:#E85D4E;
+    --tomato-dark:#C8432F;
+    --gold:#F2B705;
+    --charcoal:#2D2A26;
+    --sage:#A8C5A0;
+    --line: rgba(27,67,50,0.14);
+    --shadow: 0 10px 30px rgba(27,67,50,0.10);
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    background:var(--cream);
+    color:var(--charcoal);
+    font-family:'Inter', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4,.display-font{
+    font-family:'Fraunces', serif;
+    color:var(--forest-dark);
+  }
+  .mono{ font-family:'JetBrains Mono', monospace; }
+
+  a{ text-decoration:none; }
+  .btn-forest{ background:var(--forest); border-color:var(--forest); color:var(--cream); }
+  .btn-forest:hover{ background:var(--forest-dark); border-color:var(--forest-dark); color:var(--cream); }
+  .btn-tomato{ background:var(--tomato); border-color:var(--tomato); color:#fff; font-weight:600; }
+  .btn-tomato:hover{ background:var(--tomato-dark); border-color:var(--tomato-dark); color:#fff; }
+  .btn-outline-forest{ border-color:var(--forest); color:var(--forest); }
+  .btn-outline-forest:hover{ background:var(--forest); color:var(--cream); }
+  .text-tomato{ color:var(--tomato); }
+  .text-forest{ color:var(--forest); }
+  .bg-sage-soft{ background:#EEF3E9; }
+
+  /* ---------- NAVBAR ---------- */
+  .navbar-harvestly{
+    background:var(--forest);
+    padding:.7rem 0;
+    border-bottom:3px solid var(--gold);
+  }
+  .brand-mark{
+    font-family:'Fraunces', serif;
+    font-weight:800;
+    font-size:1.5rem;
+    color:var(--cream);
+    letter-spacing:.2px;
+  }
+  .brand-mark .dot{ color:var(--gold); }
+  .navbar-harvestly .nav-link{
+    color:rgba(251,246,236,.85);
+    font-weight:600;
+    font-size:.94rem;
+    padding:.5rem .9rem !important;
+  }
+  .navbar-harvestly .nav-link:hover, .navbar-harvestly .nav-link.active{ color:var(--gold); }
+
+  .receipt-search{
+    background:var(--paper);
+    border-radius:999px;
+    border:1px solid transparent;
+    padding:.25rem .3rem .25rem 1rem;
+    display:flex;
+    align-items:center;
+    gap:.4rem;
+  }
+  .receipt-search input{
+    border:0; background:transparent; outline:none;
+    font-family:'Inter'; font-size:.9rem; width:100%; color:var(--charcoal);
+  }
+  .receipt-search button{
+    background:var(--tomato); border:0; color:#fff; border-radius:999px;
+    width:34px; height:34px; display:flex; align-items:center; justify-content:center; flex:none;
+  }
+
+  .cart-pill{
+    position:relative; color:var(--cream); font-size:1.35rem;
+  }
+  .cart-badge{
+    position:absolute; top:-8px; right:-10px;
+    background:var(--gold); color:var(--forest-dark);
+    font-family:'JetBrains Mono'; font-weight:700; font-size:.68rem;
+    border-radius:999px; padding:1px 6px; line-height:1.3;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    background:var(--forest);
+    color:var(--cream);
+    position:relative;
+    overflow:hidden;
+    padding:4.5rem 0 5.5rem;
+  }
+  .hero::after{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      radial-gradient(circle at 85% 20%, rgba(242,183,5,0.18), transparent 45%),
+      radial-gradient(circle at 100% 90%, rgba(232,93,78,0.20), transparent 40%);
+    pointer-events:none;
+  }
+  .hero .eyebrow{
+    display:inline-flex; align-items:center; gap:.5rem;
+    border:1px solid rgba(251,246,236,.35);
+    border-radius:999px; padding:.3rem .9rem;
+    font-size:.78rem; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--sage); font-weight:600;
+  }
+  .hero h1{
+    color:var(--cream);
+    font-size:clamp(2.2rem, 4.5vw, 3.6rem);
+    line-height:1.05;
+    font-weight:700;
+  }
+  .hero h1 em{
+    font-style:italic; color:var(--gold); font-weight:600;
+  }
+  .hero p.lead{ color:rgba(251,246,236,.8); font-size:1.08rem; max-width:34rem; }
+
+  .crate-clock{
+    position:relative; z-index:1;
+    background:var(--paper);
+    border-radius:1.4rem;
+    padding:1.6rem;
+    box-shadow:var(--shadow);
+    color:var(--charcoal);
+    transform:rotate(2deg);
+  }
+  .crate-clock .ring{
+    width:150px; height:150px; border-radius:50%;
+    border:10px solid var(--sage);
+    border-top-color:var(--tomato);
+    display:flex; align-items:center; justify-content:center;
+    margin:0 auto;
+  }
+  .crate-clock .ring .time{
+    font-family:'JetBrains Mono'; font-weight:700; font-size:1.6rem; color:var(--forest-dark);
+  }
+  .produce-strip{
+    display:flex; justify-content:center; gap:.65rem; font-size:1.6rem; margin-top:1rem;
+  }
+
+  /* ---------- SECTION LABELS (signature) ---------- */
+  .section-tag{
+    display:inline-block;
+    background:var(--gold);
+    color:var(--forest-dark);
+    font-family:'JetBrains Mono';
+    font-weight:700; font-size:.72rem;
+    letter-spacing:.06em; text-transform:uppercase;
+    padding:.3rem .7rem;
+    border-radius:.3rem;
+    transform:rotate(-2deg);
+    margin-bottom:.6rem;
+  }
+  section{ padding:4rem 0; }
+  .section-title{ font-size:clamp(1.6rem,3vw,2.3rem); font-weight:700; margin-bottom:.3rem; }
+  .section-sub{ color:#5c5a54; max-width:38rem; }
+
+  /* ---------- PRODUCT CARDS ---------- */
+  .product-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:1rem;
+    overflow:hidden;
+    height:100%;
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .product-card:hover{ transform:translateY(-5px); box-shadow:var(--shadow); }
+  .product-thumb{
+    background:var(--bg-sage, #EEF3E9);
+    background:linear-gradient(160deg,#EEF3E9,#F7F1E1);
+    height:130px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:3rem;
+    position:relative;
+  }
+  .veg-dot{
+    position:absolute; top:.6rem; left:.6rem;
+    width:18px; height:18px; border-radius:3px;
+    border:2px solid #2e7d32; display:flex; align-items:center; justify-content:center;
+    background:#fff;
+  }
+  .veg-dot::after{ content:""; width:8px; height:8px; border-radius:50%; background:#2e7d32; }
+  .veg-dot.nonveg{ border-color:var(--tomato); }
+  .veg-dot.nonveg::after{ background:var(--tomato); }
+  .product-body{ padding:1rem; }
+  .product-brand{ font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; color:#8b8578; font-weight:600; }
+  .product-name{ font-weight:700; font-size:1rem; margin:.15rem 0 .4rem; color:var(--forest-dark); }
+  .product-price{ font-family:'JetBrains Mono'; font-weight:700; color:var(--tomato-dark); font-size:1.05rem; }
+  .product-price small{ color:#8b8578; font-weight:500; font-size:.72rem; }
+
+  /* ---------- CATEGORY NAV CHIPS ---------- */
+  .cat-chip{
+    border:1px solid var(--line); border-radius:999px; padding:.45rem 1rem;
+    font-weight:600; font-size:.85rem; color:var(--forest-dark); background:var(--paper);
+    white-space:nowrap;
+  }
+  .cat-chip:hover{ background:var(--forest); color:var(--cream); }
+
+  /* ---------- OFFERS CAROUSEL (flyer look) ---------- */
+  .offer-card{
+    border-radius:1.2rem; padding:2.2rem 2rem; min-height:230px;
+    display:flex; flex-direction:column; justify-content:center;
+    position:relative; overflow:hidden;
+  }
+  .offer-card::before{
+    content:""; position:absolute; top:14px; left:50%; transform:translateX(-50%);
+    width:46px; height:14px; background:rgba(0,0,0,.12); border-radius:0 0 8px 8px;
+  }
+  .offer-1{ background:linear-gradient(120deg,var(--forest),#255c40); color:var(--cream); }
+  .offer-2{ background:linear-gradient(120deg,var(--tomato),var(--tomato-dark)); color:#fff; }
+  .offer-3{ background:linear-gradient(120deg,var(--gold),#d99f00); color:var(--forest-dark); }
+  .offer-tag{ font-family:'JetBrains Mono'; font-size:.75rem; text-transform:uppercase; letter-spacing:.08em; opacity:.85; }
+  .offer-headline{ font-family:'Fraunces'; font-weight:700; font-size:1.9rem; color:inherit; margin:.3rem 0; }
+  #offersCarousel .carousel-indicators [data-bs-target]{ background:var(--forest); }
+
+  /* ---------- FILTER SIDEBAR ---------- */
+  .filter-card{
+    background:var(--paper); border:1px solid var(--line); border-radius:1rem; padding:1.3rem;
+    position:sticky; top:1rem;
+  }
+  .filter-card h6{ font-weight:800; letter-spacing:.03em; text-transform:uppercase; font-size:.78rem; color:var(--forest-dark); margin-bottom:.7rem; }
+  .filter-card hr{ border-color:var(--line); }
+  .form-check-input:checked{ background-color:var(--forest); border-color:var(--forest); }
+  .form-range::-webkit-slider-thumb{ background:var(--tomato); }
+  .form-range::-moz-range-thumb{ background:var(--tomato); }
+
+  /* ---------- MODAL / OFFCANVAS ---------- */
+  .modal-content, .offcanvas{ border-radius:0; background:var(--paper); }
+  .modal-content{ border-radius:1rem; overflow:hidden; }
+  .qty-stepper{ display:inline-flex; align-items:center; border:1px solid var(--line); border-radius:999px; }
+  .qty-stepper button{ width:34px; height:34px; border:0; background:transparent; font-weight:700; color:var(--forest-dark); }
+  .qty-stepper span{ min-width:28px; text-align:center; font-family:'JetBrains Mono'; font-weight:700; }
+
+  .cart-line{ display:flex; gap:.8rem; align-items:center; padding:.8rem 0; border-bottom:1px solid var(--line); }
+  .cart-line .thumb{ width:52px; height:52px; border-radius:.6rem; background:#EEF3E9; display:flex; align-items:center; justify-content:center; font-size:1.6rem; flex:none; }
+  .cart-empty{ text-align:center; padding:2.5rem 1rem; color:#8b8578; }
+
+  /* ---------- FOOTER ---------- */
+  footer{ background:var(--forest-dark); color:rgba(251,246,236,.75); padding:3rem 0 1.4rem; }
+  footer h6{ color:var(--cream); font-weight:800; text-transform:uppercase; font-size:.78rem; letter-spacing:.06em; }
+  footer a{ color:rgba(251,246,236,.75); }
+  footer a:hover{ color:var(--gold); }
+  .footer-brand{ font-family:'Fraunces'; font-weight:800; font-size:1.4rem; color:var(--cream); }
+  .newsletter-input{ background:rgba(251,246,236,.08); border:1px solid rgba(251,246,236,.25); color:var(--cream); }
+  .newsletter-input::placeholder{ color:rgba(251,246,236,.5); }
+  .newsletter-input:focus{ background:rgba(251,246,236,.12); color:var(--cream); box-shadow:none; border-color:var(--gold); }
+
+  /* focus visibility */
+  a:focus-visible, button:focus-visible, input:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+
+  @media (max-width: 991.98px){
+    .crate-clock{ transform:none; margin-top:2rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ NAVBAR ============ -->
+<nav class="navbar navbar-expand-lg navbar-harvestly sticky-top">
+  <div class="container">
+    <a class="navbar-brand brand-mark" href="#home">harvestly<span class="dot">.</span></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" style="border-color:rgba(251,246,236,.4)">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav mx-lg-3">
+        <li class="nav-item"><a class="nav-link active" href="#home">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="#categories">Categories</a></li>
+        <li class="nav-item"><a class="nav-link" href="#offers">Offers</a></li>
+        <li class="nav-item"><a class="nav-link" href="#shop">Shop</a></li>
+        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+      </ul>
+      <form class="receipt-search flex-grow-1 my-3 my-lg-0 me-lg-3" style="max-width:360px" onsubmit="return runSearch(event)">
+        <i class="bi bi-search text-secondary"></i>
+        <input id="searchInput" type="search" placeholder="Search for mangoes, milk, chips…" aria-label="Search groceries">
+        <button type="submit" aria-label="Search"><i class="bi bi-arrow-right"></i></button>
+      </form>
+      <div class="d-flex align-items-center gap-3">
+        <a href="#contact" class="nav-link d-lg-none">Contact</a>
+        <button class="cart-pill btn p-0" data-bs-toggle="offcanvas" data-bs-target="#cartCanvas" aria-label="Open cart">
+          <i class="bi bi-basket3"></i>
+          <span class="cart-badge" id="cartCount">0</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HERO / BANNER ============ -->
+<header class="hero" id="home">
+  <div class="container position-relative">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-7">
+        <span class="eyebrow"><i class="bi bi-lightning-charge-fill"></i> Delivered in 19 minutes, on average</span>
+        <h1 class="mt-3 mb-3">Farm to door, <em>before your coffee's cold.</em></h1>
+        <p class="lead">Harvestly picks, packs and delivers groceries from local farms and trusted brands — fruits still cool from the crate, milk that hasn't left the chain.</p>
+        <div class="d-flex flex-wrap gap-3 mt-4">
+          <a href="#shop" class="btn btn-tomato btn-lg px-4 rounded-pill">Start shopping</a>
+          <a href="#categories" class="btn btn-outline-light btn-lg px-4 rounded-pill">Browse categories</a>
+        </div>
+        <div class="d-flex gap-4 mt-4 flex-wrap">
+          <div><span class="mono fw-bold" style="color:var(--gold)">4.8★</span><div class="small text-white-50">12k+ ratings</div></div>
+          <div><span class="mono fw-bold" style="color:var(--gold)">120+</span><div class="small text-white-50">local farms</div></div>
+          <div><span class="mono fw-bold" style="color:var(--gold)">19 min</span><div class="small text-white-50">avg. delivery</div></div>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="crate-clock">
+          <div class="text-uppercase mono small text-center mb-2" style="color:#8b8578; letter-spacing:.08em;">Next slot arrives in</div>
+          <div class="ring"><span class="time" id="etaClock">19:00</span></div>
+          <div class="produce-strip">🍎🥦🥛🍌🧀🥕</div>
+          <p class="text-center small mt-2 mb-0" style="color:#8b8578">Order now for the next dispatch window</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ FEATURED ITEMS ============ -->
+<section id="featured">
+  <div class="container">
+    <span class="section-tag">Handpicked today</span>
+    <h2 class="section-title">Featured grocery items</h2>
+    <p class="section-sub mb-4">A rotating shortlist our buyers picked up this morning — freshest of the fresh.</p>
+    <div class="row g-3" id="featuredGrid"></div>
+  </div>
+</section>
+
+<!-- ============ CATEGORIES ============ -->
+<section id="categories" class="bg-sage-soft">
+  <div class="container">
+    <span class="section-tag">The whole crate</span>
+    <h2 class="section-title mb-4">Shop by category</h2>
+    <div class="d-flex gap-2 flex-nowrap overflow-auto pb-2 mb-4" style="scrollbar-width:thin;">
+      <a href="#cat-fruits" class="cat-chip">🍎 Fruits &amp; Vegetables</a>
+      <a href="#cat-dairy" class="cat-chip">🥛 Dairy Products</a>
+      <a href="#cat-snacks" class="cat-chip">🍿 Snacks</a>
+      <a href="#cat-beverages" class="cat-chip">🧃 Beverages</a>
+      <a href="#cat-household" class="cat-chip">🧺 Household Items</a>
+    </div>
+    <div id="categorySections"></div>
+  </div>
+</section>
+
+<!-- ============ OFFERS CAROUSEL ============ -->
+<section id="offers">
+  <div class="container">
+    <span class="section-tag">Don't miss out</span>
+    <h2 class="section-title mb-4">This week's offers</h2>
+    <div id="offersCarousel" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-indicators">
+        <button type="button" data-bs-target="#offersCarousel" data-bs-slide-to="0" class="active"></button>
+        <button type="button" data-bs-target="#offersCarousel" data-bs-slide-to="1"></button>
+        <button type="button" data-bs-target="#offersCarousel" data-bs-slide-to="2"></button>
+      </div>
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <div class="offer-card offer-1">
+            <span class="offer-tag">Discount banner</span>
+            <div class="offer-headline">Flat 25% off your first basket</div>
+            <p class="mb-0">Use code <span class="mono fw-bold">FRESH25</span> at checkout. Valid on orders above ₹499.</p>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <div class="offer-card offer-2">
+            <span class="offer-tag">Festival offer</span>
+            <div class="offer-headline">Harvest Fest — up to 40% off produce</div>
+            <p class="mb-0">Celebrate the season with discounted fruits, vegetables and festive combos.</p>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <div class="offer-card offer-3">
+            <span class="offer-tag">Combo deal</span>
+            <div class="offer-headline">Breakfast Combo — milk + bread + eggs</div>
+            <p class="mb-0">Bundle your morning essentials and save ₹60 compared to buying separately.</p>
+          </div>
+        </div>
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#offersCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" style="filter:invert(0.4)"></span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#offersCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" style="filter:invert(0.4)"></span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SHOP + FILTERS ============ -->
+<section id="shop" class="bg-sage-soft">
+  <div class="container">
+    <span class="section-tag">Full catalog</span>
+    <h2 class="section-title mb-4">Shop &amp; filter everything</h2>
+    <div class="row g-4">
+      <div class="col-lg-3">
+        <div class="filter-card">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="mb-0">Filters</h6>
+            <button class="btn btn-sm btn-link text-tomato p-0 text-decoration-none" onclick="clearFilters()">Clear all</button>
+          </div>
+          <hr>
+          <h6>Diet</h6>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="dietFilter" id="dietAll" value="all" checked onchange="applyFilters()">
+            <label class="form-check-label" for="dietAll">All</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="dietFilter" id="dietVeg" value="veg" onchange="applyFilters()">
+            <label class="form-check-label" for="dietVeg"><span class="veg-dot d-inline-flex position-relative" style="top:auto;left:auto;margin-right:4px"></span>Vegetarian</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="dietFilter" id="dietNonveg" value="nonveg" onchange="applyFilters()">
+            <label class="form-check-label" for="dietNonveg"><span class="veg-dot nonveg d-inline-flex position-relative" style="top:auto;left:auto;margin-right:4px"></span>Non-Vegetarian</label>
+          </div>
+          <hr>
+          <h6>Price range — up to <span id="priceLabel" class="mono">₹350</span></h6>
+          <input type="range" class="form-range" min="30" max="350" step="10" value="350" id="priceRange" oninput="applyFilters()">
+          <hr>
+          <h6>Category</h6>
+          <div id="categoryFilterList"></div>
+          <hr>
+          <h6>Brand</h6>
+          <div id="brandFilterList" style="max-height:170px; overflow-y:auto;"></div>
+        </div>
+      </div>
+      <div class="col-lg-9">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span class="small text-secondary" id="resultCount"></span>
+        </div>
+        <div class="row g-3" id="shopGrid"></div>
+        <div id="noResults" class="text-center py-5 d-none">
+          <div style="font-size:2.4rem">🧺</div>
+          <p class="text-secondary mb-0">Nothing matches those filters — try widening your search.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRODUCT MODAL ============ -->
+<div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-0">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body pt-0">
+        <div class="row g-4">
+          <div class="col-md-5">
+            <div class="product-thumb rounded-4" style="height:220px; font-size:5rem;" id="modalThumb"></div>
+          </div>
+          <div class="col-md-7">
+            <div class="product-brand" id="modalBrand"></div>
+            <h3 id="modalName" class="mb-2"></h3>
+            <div class="product-price fs-4 mb-2" id="modalPrice"></div>
+            <p class="text-secondary" id="modalDesc"></p>
+            <div class="d-flex align-items-center gap-3 mt-3">
+              <div class="qty-stepper">
+                <button type="button" onclick="changeModalQty(-1)" aria-label="Decrease quantity">−</button>
+                <span id="modalQty">1</span>
+                <button type="button" onclick="changeModalQty(1)" aria-label="Increase quantity">+</button>
+              </div>
+              <button class="btn btn-tomato rounded-pill px-4" id="modalAddBtn" onclick="addModalToCart()">Add to cart</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CART OFFCANVAS ============ -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="cartCanvas">
+  <div class="offcanvas-header border-bottom">
+    <h5 class="offcanvas-title display-font">Your basket</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column">
+    <div id="cartItems" class="flex-grow-1"></div>
+    <div id="cartFooter" class="pt-3 border-top mt-2 d-none">
+      <div class="d-flex justify-content-between mb-1">
+        <span class="text-secondary">Subtotal</span>
+        <span class="mono" id="cartSubtotal">₹0</span>
+      </div>
+      <div class="d-flex justify-content-between mb-3">
+        <span class="text-secondary">Delivery</span>
+        <span class="mono" id="cartDelivery">₹0</span>
+      </div>
+      <div class="d-flex justify-content-between fw-bold fs-5 mb-3">
+        <span>Total</span>
+        <span class="mono text-tomato" id="cartTotal">₹0</span>
+      </div>
+      <button class="btn btn-tomato w-100 rounded-pill py-2" onclick="checkout()">Checkout</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer id="contact">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <div class="footer-brand mb-2">harvestly<span style="color:var(--gold)">.</span></div>
+        <p class="small">Grocery delivery built around freshness and speed — sourced from local farms, delivered to your door.</p>
+        <div class="d-flex gap-3 fs-5 mt-3">
+          <a href="#"><i class="bi bi-facebook"></i></a>
+          <a href="#"><i class="bi bi-instagram"></i></a>
+          <a href="#"><i class="bi bi-twitter-x"></i></a>
+        </div>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h6>Shop</h6>
+        <ul class="list-unstyled small">
+          <li class="mb-2"><a href="#categories">Categories</a></li>
+          <li class="mb-2"><a href="#offers">Offers</a></li>
+          <li class="mb-2"><a href="#shop">Full catalog</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h6>Company</h6>
+        <ul class="list-unstyled small">
+          <li class="mb-2"><a href="#">About us</a></li>
+          <li class="mb-2"><a href="#">Careers</a></li>
+          <li class="mb-2"><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-4">
+        <h6>Stay fresh — get our newsletter</h6>
+        <form class="d-flex gap-2 mt-2" onsubmit="event.preventDefault(); alert('Subscribed! Watch your inbox.');">
+          <input type="email" required class="form-control newsletter-input" placeholder="you@example.com">
+          <button class="btn btn-tomato flex-shrink-0">Join</button>
+        </form>
+        <p class="small mt-3 mb-0"><i class="bi bi-geo-alt"></i> Patiala, Punjab, India &nbsp; · &nbsp; <i class="bi bi-telephone"></i> 1800-123-4567</p>
+      </div>
+    </div>
+    <hr class="mt-4" style="border-color:rgba(251,246,236,.15)">
+    <p class="small text-center mb-0">© 2026 Harvestly. Built as a student project.</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+/* ======================= DATA ======================= */
+const PRODUCTS = [
+  { id:1, name:"Royal Gala Apples (1kg)", category:"Fruits & Vegetables", brand:"FarmFresh", veg:true, price:120, emoji:"🍎", desc:"Crisp, sweet apples picked within 48 hours and kept cool the whole way here." },
+  { id:2, name:"Broccoli (500g)", category:"Fruits & Vegetables", brand:"FarmFresh", veg:true, price:80, emoji:"🥦", desc:"Tight, deep-green florets — steams in under 5 minutes." },
+  { id:3, name:"Robusta Bananas (dozen)", category:"Fruits & Vegetables", brand:"NaturePick", veg:true, price:50, emoji:"🍌", desc:"Naturally ripened, no chemical gassing, ready to eat today." },
+  { id:4, name:"Vine Tomatoes (1kg)", category:"Fruits & Vegetables", brand:"NaturePick", veg:true, price:40, emoji:"🍅", desc:"Juicy, sun-ripened tomatoes perfect for salads and curries." },
+  { id:5, name:"Baby Carrots (500g)", category:"Fruits & Vegetables", brand:"FarmFresh", veg:true, price:45, emoji:"🥕", desc:"Sweet, crunchy carrots — great for snacking or roasting." },
+  { id:6, name:"Full Cream Milk (1L)", category:"Dairy Products", brand:"Amul", veg:true, price:60, emoji:"🥛", desc:"Pasteurised full-cream milk, delivered chilled." },
+  { id:7, name:"Cheddar Cheese Block (200g)", category:"Dairy Products", brand:"Britannia", veg:true, price:150, emoji:"🧀", desc:"Aged cheddar with a sharp, nutty finish." },
+  { id:8, name:"Table Butter (250g)", category:"Dairy Products", brand:"Amul", veg:true, price:90, emoji:"🧈", desc:"Creamy salted butter made from fresh cream." },
+  { id:9, name:"Farm Eggs (12 pcs)", category:"Dairy Products", brand:"CountryNest", veg:false, price:80, emoji:"🥚", desc:"Free-range eggs, rich yolks, sourced from local coops." },
+  { id:10, name:"Greek Yogurt Cup (400g)", category:"Dairy Products", brand:"Nestlé", veg:true, price:70, emoji:"🥣", desc:"Thick, protein-rich yogurt with a gentle tang." },
+  { id:11, name:"Classic Salted Chips (150g)", category:"Snacks", brand:"Lays", veg:true, price:30, emoji:"🍟", desc:"Crunchy potato chips, lightly salted." },
+  { id:12, name:"Butter Cookies (200g)", category:"Snacks", brand:"Britannia", veg:true, price:80, emoji:"🍪", desc:"Melt-in-the-mouth butter cookies, great with tea." },
+  { id:13, name:"Nacho Cheese Tortilla (180g)", category:"Snacks", brand:"Doritos", veg:true, price:60, emoji:"🌽", desc:"Bold cheese-flavoured tortilla chips." },
+  { id:14, name:"Chicken Nuggets (400g, frozen)", category:"Snacks", brand:"McCain", veg:false, price:250, emoji:"🍗", desc:"Crispy-coated chicken nuggets, oven or air-fry ready." },
+  { id:15, name:"Roasted Almonds (250g)", category:"Snacks", brand:"NaturePick", veg:true, price:220, emoji:"🥜", desc:"Lightly roasted, unsalted almonds — a wholesome snack." },
+  { id:16, name:"100% Orange Juice (1L)", category:"Beverages", brand:"RealFruit", veg:true, price:90, emoji:"🍊", desc:"No added sugar, cold-pressed orange juice." },
+  { id:17, name:"Classic Cola (2L)", category:"Beverages", brand:"Coca-Cola", veg:true, price:40, emoji:"🥤", desc:"The original fizzy classic, chilled and ready." },
+  { id:18, name:"Instant Coffee Jar (100g)", category:"Beverages", brand:"Nescafé", veg:true, price:200, emoji:"☕", desc:"Rich, aromatic instant coffee for your morning ritual." },
+  { id:19, name:"Green Tea Bags (25 pcs)", category:"Beverages", brand:"Lipton", veg:true, price:150, emoji:"🍵", desc:"Light, antioxidant-rich green tea." },
+  { id:20, name:"Mixed Fruit Smoothie (500ml)", category:"Beverages", brand:"RealFruit", veg:true, price:110, emoji:"🧃", desc:"A blend of seasonal fruits, no preservatives." },
+  { id:21, name:"Dish Wash Liquid (500ml)", category:"Household Items", brand:"Vim", veg:true, price:70, emoji:"🧴", desc:"Cuts through grease fast, gentle on hands." },
+  { id:22, name:"Soft Tissue Rolls (Pack of 4)", category:"Household Items", brand:"Origami", veg:true, price:100, emoji:"🧻", desc:"2-ply soft tissues for everyday use." },
+  { id:23, name:"Laundry Detergent (1kg)", category:"Household Items", brand:"Surf Excel", veg:true, price:180, emoji:"🧺", desc:"Removes tough stains in a single wash." },
+  { id:24, name:"Toilet Cleaner (500ml)", category:"Household Items", brand:"Harpic", veg:true, price:90, emoji:"🧽", desc:"Kills 99.9% of germs, leaves a fresh scent." },
+];
+
+const CATEGORIES = ["Fruits & Vegetables","Dairy Products","Snacks","Beverages","Household Items"];
+const CATEGORY_ANCHORS = { "Fruits & Vegetables":"cat-fruits", "Dairy Products":"cat-dairy", "Snacks":"cat-snacks", "Beverages":"cat-beverages", "Household Items":"cat-household" };
+const CATEGORY_ICONS = { "Fruits & Vegetables":"🍎", "Dairy Products":"🥛", "Snacks":"🍿", "Beverages":"🧃", "Household Items":"🧺" };
+
+let cart = {};        // { productId: qty }
+let modalProduct = null;
+let modalQty = 1;
+
+/* ======================= RENDER: CARD ======================= */
+function productCard(p){
+  return `
+  <div class="col-6 col-md-4 col-lg-3 product-item"
+       data-category="${p.category}" data-brand="${p.brand}" data-veg="${p.veg}" data-price="${p.price}">
+    <div class="product-card">
+      <div class="product-thumb">
+        <span class="veg-dot ${p.veg ? '' : 'nonveg'}" title="${p.veg ? 'Vegetarian' : 'Non-vegetarian'}"></span>
+        ${p.emoji}
+      </div>
+      <div class="product-body">
+        <div class="product-brand">${p.brand}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="product-price">₹${p.price} <small>/unit</small></div>
+        </div>
+        <div class="d-flex gap-2 mt-3">
+          <button class="btn btn-sm btn-outline-forest flex-grow-1 rounded-pill" onclick="openProductModal(${p.id})">View</button>
+          <button class="btn btn-sm btn-tomato rounded-pill" onclick="addToCart(${p.id},1)" aria-label="Add ${p.name} to cart"><i class="bi bi-plus-lg"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ======================= RENDER: FEATURED ======================= */
+function renderFeatured(){
+  const featured = [1,6,11,16,3,9,17,22].map(id => PRODUCTS.find(p=>p.id===id));
+  document.getElementById('featuredGrid').innerHTML = featured.map(productCard).join('');
+}
+
+/* ======================= RENDER: CATEGORY SECTIONS ======================= */
+function renderCategorySections(){
+  const container = document.getElementById('categorySections');
+  container.innerHTML = CATEGORIES.map(cat => {
+    const items = PRODUCTS.filter(p => p.category === cat).slice(0,4);
+    return `
+    <div id="${CATEGORY_ANCHORS[cat]}" class="mb-5">
+      <h4 class="mb-3">${CATEGORY_ICONS[cat]} ${cat}</h4>
+      <div class="row g-3">${items.map(productCard).join('')}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ======================= RENDER: SHOP GRID + FILTERS ======================= */
+function renderShopGrid(){
+  document.getElementById('shopGrid').innerHTML = PRODUCTS.map(productCard).join('');
+}
+
+function renderFilterLists(){
+  document.getElementById('categoryFilterList').innerHTML = CATEGORIES.map(c => `
+    <div class="form-check">
+      <input class="form-check-input cat-filter" type="checkbox" value="${c}" id="cf-${c.replace(/\s/g,'')}" checked onchange="applyFilters()">
+      <label class="form-check-label" for="cf-${c.replace(/\s/g,'')}">${c}</label>
+    </div>`).join('');
+
+  const brands = [...new Set(PRODUCTS.map(p=>p.brand))].sort();
+  document.getElementById('brandFilterList').innerHTML = brands.map(b => `
+    <div class="form-check">
+      <input class="form-check-input brand-filter" type="checkbox" value="${b}" id="bf-${b.replace(/\s/g,'')}" checked onchange="applyFilters()">
+      <label class="form-check-label" for="bf-${b.replace(/\s/g,'')}">${b}</label>
+    </div>`).join('');
+}
+
+/* ======================= FILTERING (shop section only) ======================= */
+function applyFilters(){
+  const diet = document.querySelector('input[name="dietFilter"]:checked').value;
+  const maxPrice = parseInt(document.getElementById('priceRange').value, 10);
+  document.getElementById('priceLabel').textContent = '₹' + maxPrice;
+
+  const activeCats = [...document.querySelectorAll('.cat-filter:checked')].map(i => i.value);
+  const activeBrands = [...document.querySelectorAll('.brand-filter:checked')].map(i => i.value);
+
+  let visibleCount = 0;
+  document.querySelectorAll('#shopGrid .product-item').forEach(el => {
+    const cat = el.dataset.category, brand = el.dataset.brand;
+    const veg = el.dataset.veg === 'true';
+    const price = parseInt(el.dataset.price, 10);
+
+    let show = true;
+    if (diet === 'veg' && !veg) show = false;
+    if (diet === 'nonveg' && veg) show = false;
+    if (price > maxPrice) show = false;
+    if (!activeCats.includes(cat)) show = false;
+    if (!activeBrands.includes(brand)) show = false;
+
+    el.style.display = show ? '' : 'none';
+    if (show) visibleCount++;
+  });
+
+  document.getElementById('resultCount').textContent = `${visibleCount} product${visibleCount!==1?'s':''} found`;
+  document.getElementById('noResults').classList.toggle('d-none', visibleCount !== 0);
+}
+
+function clearFilters(){
+  document.getElementById('dietAll').checked = true;
+  document.getElementById('priceRange').value = 350;
+  document.querySelectorAll('.cat-filter, .brand-filter').forEach(i => i.checked = true);
+  applyFilters();
+}
+
+/* ======================= SEARCH (scrolls to & highlights shop grid) ======================= */
+function runSearch(e){
+  e.preventDefault();
+  const term = document.getElementById('searchInput').value.trim().toLowerCase();
+  document.getElementById('shop').scrollIntoView({behavior:'smooth'});
+  if(!term){ return false; }
+  clearFilters();
+  document.querySelectorAll('#shopGrid .product-item').forEach(el => {
+    const name = el.querySelector('.product-name').textContent.toLowerCase();
+    const show = name.includes(term);
+    el.style.display = show ? '' : 'none';
+  });
+  const visible = [...document.querySelectorAll('#shopGrid .product-item')].filter(el => el.style.display !== 'none').length;
+  document.getElementById('resultCount').textContent = `${visible} result${visible!==1?'s':''} for "${term}"`;
+  document.getElementById('noResults').classList.toggle('d-none', visible !== 0);
+  return false;
+}
+
+/* ======================= PRODUCT MODAL ======================= */
+function openProductModal(id){
+  modalProduct = PRODUCTS.find(p => p.id === id);
+  modalQty = 1;
+  document.getElementById('modalThumb').textContent = modalProduct.emoji;
+  document.getElementById('modalBrand').textContent = modalProduct.brand;
+  document.getElementById('modalName').textContent = modalProduct.name;
+  document.getElementById('modalPrice').textContent = `₹${modalProduct.price} /unit`;
+  document.getElementById('modalDesc').textContent = modalProduct.desc;
+  document.getElementById('modalQty').textContent = modalQty;
+  new bootstrap.Modal(document.getElementById('productModal')).show();
+}
+function changeModalQty(delta){
+  modalQty = Math.max(1, modalQty + delta);
+  document.getElementById('modalQty').textContent = modalQty;
+}
+function addModalToCart(){
+  addToCart(modalProduct.id, modalQty);
+  const btn = document.getElementById('modalAddBtn');
+  const old = btn.textContent;
+  btn.textContent = 'Added ✓';
+  setTimeout(() => btn.textContent = old, 900);
+}
+
+/* ======================= CART ======================= */
+function addToCart(id, qty){
+  cart[id] = (cart[id] || 0) + qty;
+  renderCart();
+  pulseCartIcon();
+}
+function removeFromCart(id){
+  delete cart[id];
+  renderCart();
+}
+function changeCartQty(id, delta){
+  cart[id] = (cart[id] || 0) + delta;
+  if(cart[id] <= 0) delete cart[id];
+  renderCart();
+}
+function pulseCartIcon(){
+  const badge = document.getElementById('cartCount');
+  badge.style.transform = 'scale(1.35)';
+  setTimeout(()=> badge.style.transform = 'scale(1)', 180);
+}
+
+function renderCart(){
+  const ids = Object.keys(cart);
+  const totalCount = ids.reduce((sum,id) => sum + cart[id], 0);
+  document.getElementById('cartCount').textContent = totalCount;
+
+  const container = document.getElementById('cartItems');
+  const footer = document.getElementById('cartFooter');
+
+  if(ids.length === 0){
+    container.innerHTML = `<div class="cart-empty"><div style="font-size:2.4rem">🧺</div><p class="mb-0">Your basket is empty.<br>Go pick something fresh!</p></div>`;
+    footer.classList.add('d-none');
+    return;
+  }
+
+  let subtotal = 0;
+  container.innerHTML = ids.map(id => {
+    const p = PRODUCTS.find(pr => pr.id == id);
+    const qty = cart[id];
+    const lineTotal = p.price * qty;
+    subtotal += lineTotal;
+    return `
+    <div class="cart-line">
+      <div class="thumb">${p.emoji}</div>
+      <div class="flex-grow-1">
+        <div class="fw-semibold small">${p.name}</div>
+        <div class="text-secondary small mono">₹${p.price} × ${qty} = ₹${lineTotal}</div>
+        <div class="qty-stepper mt-1">
+          <button type="button" onclick="changeCartQty(${id},-1)" aria-label="Decrease">−</button>
+          <span>${qty}</span>
+          <button type="button" onclick="changeCartQty(${id},1)" aria-label="Increase">+</button>
+        </div>
+      </div>
+      <button class="btn btn-sm text-tomato" onclick="removeFromCart(${id})" aria-label="Remove ${p.name}"><i class="bi bi-trash3"></i></button>
+    </div>`;
+  }).join('');
+
+  const delivery = subtotal >= 499 || subtotal === 0 ? 0 : 30;
+  document.getElementById('cartSubtotal').textContent = `₹${subtotal}`;
+  document.getElementById('cartDelivery').textContent = delivery === 0 ? 'Free' : `₹${delivery}`;
+  document.getElementById('cartTotal').textContent = `₹${subtotal + delivery}`;
+  footer.classList.remove('d-none');
+}
+
+function checkout(){
+  const totalCount = Object.values(cart).reduce((a,b)=>a+b,0);
+  if(totalCount === 0) return;
+  alert('Order placed! Your groceries are on the way. 🧺');
+  cart = {};
+  renderCart();
+  bootstrap.Offcanvas.getInstance(document.getElementById('cartCanvas'))?.hide();
+}
+
+/* ======================= ETA CLOCK ======================= */
+function tickClock(){
+  const el = document.getElementById('etaClock');
+  let [m,s] = el.textContent.split(':').map(Number);
+  if(s === 0){ if(m === 0){ m=19; s=0; } else { m--; s=59; } } else { s--; }
+  el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+/* ======================= INIT ======================= */
+document.addEventListener('DOMContentLoaded', () => {
+  renderFeatured();
+  renderCategorySections();
+  renderShopGrid();
+  renderFilterLists();
+  applyFilters();
+  renderCart();
+  setInterval(tickClock, 1000);
+});
+</script>
+</body>
+</html>
